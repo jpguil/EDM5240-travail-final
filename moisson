@@ -1,0 +1,29 @@
+# coding: utf-8
+
+import csv
+import requests
+from bs4 import BeautifulSoup
+
+annees = ["06-07","07-08","08-09","09-10","10-11","11-12","12-13","13-14","14-15","15-16","16-17"]
+trimestres = ["-q1","-q2","-q3","-q4"]
+contrats = range(0,1000)
+
+entetes = {
+	"User-Agent":"Jean-Philippe Guilbault - Requête envoyée dans le cadre d'un cours de journalisme informatique à l'UQAM (EDM5240)",
+	"From":"jp.guilbault@protonmail.com"
+}
+
+for annee in annees:
+    for trimestre in trimestres:
+        for contrat in contrats:
+            urls = "http://www.aadnc-aandc.gc.ca/prodis/cntrcts/{}{}/ct{}-fra.asp".format(annee,trimestre,contrat)
+            reponses = requests.get(urls, headers=entetes)
+            stats = []
+            if reponses.status_code == 200:
+                # print("Analyse du {}e contrat du {} trimestre de l'année {}".format(contrat,trimestre,annee))
+                pages = BeautifulSoup(reponses.text,"html.parser")
+                for page in pages:
+                    tableau = page.find("tbody")
+                    print(tableau)
+            else: 
+                stats.append("")
