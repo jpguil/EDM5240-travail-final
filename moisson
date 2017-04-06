@@ -13,6 +13,8 @@ entetes = {
 	"From":"jp.guilbault@protonmail.com"
 }
 
+fichier = "contrats-aanc.csv"
+
 for annee in annees:
     for trimestre in trimestres:
         for contrat in contrats:
@@ -20,10 +22,17 @@ for annee in annees:
             reponses = requests.get(urls, headers=entetes)
             stats = []
             if reponses.status_code == 200:
-                # print("Analyse du {}e contrat du {} trimestre de l'année {}".format(contrat,trimestre,annee))
-                pages = BeautifulSoup(reponses.text,"html.parser")
-                for page in pages:
-                    tableau = page.find("tbody")
-                    print(tableau)
+                print("Analyse du {}e contrat du {}e trimestre de l'année {}".format(contrat,trimestre[-1],annee))
+                page = BeautifulSoup(reponses.text,"html.parser")
+                # tableau = page.find("tbody")
+                # print(tableau)
+                lignes = page.find_all("tr")
+                for l in lignes:
+                    contrat = (l.td.text.strip())
+                    stats.append(contrat)
             else: 
                 stats.append("")
+                
+            ecrire = open(fichier,"a")
+            pouet = csv.writer(ecrire)
+            pouet.writerow(stats)
